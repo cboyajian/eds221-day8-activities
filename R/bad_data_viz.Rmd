@@ -1,0 +1,52 @@
+---
+title: "Bad Data Viz"
+author: "Clarissa Boyajian"
+date: "8/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(paletteer)
+library(ggExtra)
+library(ggbeeswarm)
+library(sf)
+library(gghighlight)
+library(ggrepel)
+library(patchwork)
+library(gapminder)
+```
+
+
+```{r}
+space_launches <- read_csv(here("data", "space_launches.csv"))
+```
+
+```{r}
+ggplot(data = space_launches, aes(x = launch_year, y = type)) +
+  geom_point(aes(color = launch_year),
+             shape = 22,
+             fill = "limegreen",
+             color = "pink",
+             size = 2) +
+  theme(
+    axis.text.y = element_text(color = c("purple", "darkblue", "lightblue", "green", "yellow", "orange", "red")),
+    axis.text.x = element_text(color = "pink"),
+    plot.background = element_rect(fill = "yellow"),
+    axis.title = element_text(color = "limegreen", size = 25),
+    title = element_text(color = "lightblue", size = 30),
+    panel.grid = element_line(color = "blue")
+  ) +
+  labs(title = "When Rockets Launch",
+       x = "What Year Is It?",
+       y = "What Rocket Type Is It?")
+
+ggsave(here("bad.viz.jpg"))
+```
+
+
+
+

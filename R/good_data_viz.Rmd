@@ -1,0 +1,94 @@
+---
+title: "Data Viz Best"
+author: "Clarissa Boyajian"
+date: "8/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(paletteer)
+library(ggExtra)
+library(ggbeeswarm)
+library(sf)
+library(gghighlight)
+library(ggrepel)
+library(patchwork)
+library(gapminder)
+```
+
+
+Read in data:
+```{r}
+sf_ghg <- read_csv(here("data", "San_Francisco_Communitywide_Greenhouse_Gas_Inventory.csv")) %>% 
+  clean_names()
+```
+
+Wrangle and summarize data:
+```{r}
+sf_ghg_summary <- sf_ghg %>% 
+  filter(str_detect(sector_detail1, pattern = c("Residential|Commercial & Industrial")),
+         calendar_year >= 2000,
+         !str_detect(commodity_type, pattern = "Gas Oil")) %>% 
+  group_by(calendar_year, commodity_type) %>% 
+  summarize(annual_emissions = sum(emissions_mt_co2e, na.rm = TRUE) / 1000000) %>%
+  mutate(commodity_type = fct_reorder(commodity_type, annual_emissions, .fun = sum))
+
+```
+
+Make graph:
+
+
+2nd try:
+```{r}
+ggplot(data = sf_ghg_summary, aes(x = calendar_year, y = annual_emissions)) +
+  geom_area(aes(fill = commodity_type), color = "black", size = 0.1) +
+  scale_fill_paletteer_d(palette = "IslamicArt::samarqand2") +
+  scale_x_continuous(limits = c(2000, 2019),
+                     breaks = c(2000, 2005, 2010, 2015, 2019),
+                     expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 4.5)) +
+  labs(fill = "Commodity type",
+       x = "Year",
+       y = expression(over("Annual Emissions", "(megatons C02)")),
+       title = "Residentail, commercial, & industrial annual emissions",
+       subtitle = "per year by commodity type") +
+  theme(
+    panel.grid = element_blank(),
+    panel.background = element_rect(fill = "white",
+                                    color ="grey"),
+    axis.title.y = element_text(angle = 0))
+  
+ggsave(here("sf_ghg_good_viz.jpg"))
+```
+
+1st try (scrapped):
+```{r}
+ggplot(data = sf_ghg_summary, aes(y = as.factor(calendar_year), x = annual_emissions)) +
+  geom_col(aes(fill = commodity_type), color = "black", size = .25) +
+  #scale_y_discrete(limits = c(2000, 2020),
+                   #breaks = c(2000, 2005, 2010, 2012, 2015, 2016, 2017, 2018, 2019, 2020)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  labs(fill = "Commodity type",
+       y = "Year",
+       x = "Annual Emissions (mega tons C02)",
+       title = "Residentail, commercial, & industrial annual emissions",
+       subtitle = "per year by commodity type") +
+  theme(
+    panel.grid = element_blank(),
+    panel.background = element_rect(fill = "white",
+                                    color ="gray")
+  ) +
+  scale_fill_paletteer_d(palette = "fishualize::Hypsoblennius_invemar")
+
+
+```
+
+
+
+
+

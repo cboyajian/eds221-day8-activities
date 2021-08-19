@@ -1,0 +1,36 @@
+---
+title: "Data Wrangling Practice"
+author: "Clarissa Boyajian"
+date: "8/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+```{r}
+sf_ghg <- read_csv(here("data", "San_Francisco_Communitywide_Greenhouse_Gas_Inventory.csv")) %>% 
+  clean_names()
+```
+
+```{r}
+sf_ghg_summary_1 <- sf_ghg %>% 
+  group_by(calendar_year, sector_general) %>% 
+  summarize(annual_emissions = sum(emissions_mt_co2e))
+
+sf_ghg_summary_2 <- sf_ghg %>% 
+  group_by(calendar_year, commodity_type) %>% 
+  summarize(annual_emissions = sum(emissions_mt_co2e))
+
+sf_ghg_subset <- sf_ghg %>% 
+  filter(calendar_year >= 2005,
+         str_detect(sector_detail2, pattern = "PG&E")) %>% 
+  select(calendar_year, sector_detail2, emissions_mt_co2e)
+```
+
+
+
