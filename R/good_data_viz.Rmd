@@ -66,27 +66,20 @@ ggplot(data = sf_ghg_summary, aes(x = calendar_year, y = annual_emissions)) +
 ggsave(here("sf_ghg_good_viz.jpg"))
 ```
 
-1st try (scrapped):
 ```{r}
-ggplot(data = sf_ghg_summary, aes(y = as.factor(calendar_year), x = annual_emissions)) +
-  geom_col(aes(fill = commodity_type), color = "black", size = .25) +
-  #scale_y_discrete(limits = c(2000, 2020),
-                   #breaks = c(2000, 2005, 2010, 2012, 2015, 2016, 2017, 2018, 2019, 2020)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  labs(fill = "Commodity type",
-       y = "Year",
-       x = "Annual Emissions (mega tons C02)",
-       title = "Residentail, commercial, & industrial annual emissions",
-       subtitle = "per year by commodity type") +
-  theme(
-    panel.grid = element_blank(),
-    panel.background = element_rect(fill = "white",
-                                    color ="gray")
-  ) +
-  scale_fill_paletteer_d(palette = "fishualize::Hypsoblennius_invemar")
+
 
 
 ```
+
+
+## Writing alt text: 
+An area graph showing the annual CO2 emissions from residential, commercial and industrial buildings from 2000 to 2019 for natural gas, electricity, steam, and liquid gas. Natural gas annual emissions generally hold steady while all other commodity types fall by about half over the time period.
+
+
+
+
+
 
 
 
